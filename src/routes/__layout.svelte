@@ -1,14 +1,12 @@
-<svelte:head>
-  <link rel="stylesheet" href="../styles/normalize.css" />
-  <link rel="stylesheet" href="../styles/skeleton.css" />
-</svelte:head>
+<script>
+  import 'skeleton-elements/css'
+</script>
 
 <template>
   <nav class="navbar">
     <div class="container">
       <ul class="navbar-list">
-        <li class="navbar-item">Item 1</li>
-        <li class="navbar-item">Item 2</li>
+        <li class="navbar-item">Soccor</li>
       </ul>
     </div>
   </nav>

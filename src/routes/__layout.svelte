@@ -6,7 +6,7 @@
   <nav class="navbar">
     <div class="container">
       <ul class="navbar-list">
-        <li class="navbar-item"><a href="/">Soccor</a> </li>
+        <li class="navbar-item"><h1><a href="/">Soccor</a></h1></li>
       </ul>
     </div>
   </nav>

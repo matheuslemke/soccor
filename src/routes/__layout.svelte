@@ -1,12 +1,12 @@
-<script>
-  import 'skeleton-elements/css'
-</script>
-
 <template>
+  <head>
+    <link rel="stylesheet" href="/src/styles/normalize.css" />
+    <link rel="stylesheet" href="/src/styles/skeleton.css" />
+  </head>
   <nav class="navbar">
     <div class="container">
       <ul class="navbar-list">
-        <li class="navbar-item">Soccor</li>
+        <li class="navbar-item"><a href="/">Soccor</a> </li>
       </ul>
     </div>
   </nav>

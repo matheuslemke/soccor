@@ -16,6 +16,10 @@
   ]
   let date = new Date().toISOString().split('T')[0]
 
+  const handleChangeDate = ({ target }) => {
+    date = target.value
+  }
+
   const updateMatches = async () => {
     const url = `https://v3.football.api-sports.io/fixtures?date=${date}`
 
@@ -59,7 +63,7 @@
           <h3>Brasileirão</h3>
         </div>
         <div class="eight columns">
-          <input type="date" value={date} on:change={(e) => (date = e.target.value)} />
+          <input type="date" value={date} on:change={handleChangeDate} />
           <input class="button-primary" type="submit" value="Pesquisar" />
         </div>
       </div>

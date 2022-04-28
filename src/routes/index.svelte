@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { environment } from '$lib/env/env'
 
   type Match = {
     time: string
@@ -22,8 +23,9 @@
 
   const updateMatches = async () => {
     const url = `https://v3.football.api-sports.io/fixtures?date=${date}`
+    const headers = { 'x-apisports-key': environment.apiToken }
 
-    const response = await fetch(url) //, { headers })
+    const response = await fetch(url, { headers })
 
     if (response.ok) {
       const responseBody = await response.json()
@@ -51,6 +53,7 @@
 
   onMount(() => {
     updateMatches()
+    // alert('opa '+ process.env.NODE_ENV)
   })
 </script>
 

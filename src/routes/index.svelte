@@ -6,15 +6,12 @@
     time: string
     homeTeam: string
     awayTeam: string
+    leagueId: number
   }
 
-  let matches: Match[] = [
-    {
-      time: '08:00',
-      homeTeam: 'São Paulo',
-      awayTeam: 'Parmera'
-    }
-  ]
+  const BRASILEIRAO = 71
+  let matches: Match[] = []
+  let brasileiraoMatches: Match[] = []
   let date = new Date().toISOString().split('T')[0]
 
   const handleChangeDate = ({ target }) => {
@@ -23,13 +20,14 @@
 
   const updateMatches = async () => {
     const url = `https://v3.football.api-sports.io/fixtures?date=${date}`
-    const headers = { 'x-apisports-key': environment.apiToken }
+    const headers = { 'x-apisports-key': `${environment.apiToken}` }
 
     const response = await fetch(url, { headers })
 
     if (response.ok) {
       const responseBody = await response.json()
       mapToMatches(responseBody.response)
+      fillBrasileirao()
       return
     }
 
@@ -41,19 +39,23 @@
     }
   }
 
+  const fillBrasileirao = () => {
+    brasileiraoMatches = matches.filter((m) => m.leagueId === BRASILEIRAO)
+  }
+
   const mapToMatches = (responseMatches: any[]) => {
     matches = responseMatches.map((m) => {
       return {
         time: new Date(m.fixture.date).toString().slice(16, 21),
         homeTeam: m.teams.home.name,
-        awayTeam: m.teams.away.name
+        awayTeam: m.teams.away.name,
+        leagueId: m.league.id
       }
     }) as Match[]
   }
 
   onMount(() => {
     updateMatches()
-    // alert('opa '+ process.env.NODE_ENV)
   })
 </script>
 
@@ -62,13 +64,11 @@
     <div class="container">
       <p />
       <div class="row">
-        <div class="four columns">
-          <h3>Brasileirão</h3>
-        </div>
-        <div class="eight columns">
-          <input type="date" value={date} on:change={handleChangeDate} />
-          <input class="button-primary" type="submit" value="Pesquisar" />
-        </div>
+        <input type="date" value={date} on:change={handleChangeDate} />
+        <input class="button-primary" type="submit" value="Pesquisar" />
+      </div>
+      <div class="row">
+        <h3>Brasileirão</h3>
       </div>
       <table>
         <thead>
@@ -79,7 +79,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each matches as match}
+          {#each brasileiraoMatches as match}
             <tr>
               <td>{match.time}</td>
               <td>{match.homeTeam}</td>

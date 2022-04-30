@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { Accordion, AccordionItem } from 'svelte-collapsible'
   import { environment } from '$lib/env/env'
 
   type Match = {
@@ -67,28 +68,50 @@
         <input type="date" value={date} on:change={handleChangeDate} />
         <input class="button-primary" type="submit" value="Pesquisar" />
       </div>
-      <div class="row">
-        <h3>Brasileirão</h3>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Horário</th>
-            <th>Casa</th>
-            <th>Fora</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each brasileiraoMatches as match}
-            <tr>
-              <td>{match.time}</td>
-              <td>{match.homeTeam}</td>
-              <td>{match.awayTeam}</td>
-            </tr>
-          {/each}
-          <tr />
-        </tbody>
-      </table>
+      <Accordion>
+        <AccordionItem>
+          <div slot="header" class="row">
+            <div class="one column">
+              <svg
+                style="tran"
+                width="20"
+                height="20"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                ><path d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+            <div class="eleven columns">
+              <h3>Brasileirão</h3>
+            </div>
+          </div>
+          <div slot="body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Horário</th>
+                  <th>Casa</th>
+                  <th>Fora</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each brasileiraoMatches as match}
+                  <tr>
+                    <td>{match.time}</td>
+                    <td>{match.homeTeam}</td>
+                    <td>{match.awayTeam}</td>
+                  </tr>
+                {/each}
+                <tr />
+              </tbody>
+            </table>
+          </div>
+        </AccordionItem>
+      </Accordion>
     </div>
   </body>
 </template>

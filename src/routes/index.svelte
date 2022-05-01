@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Accordion, AccordionItem } from 'svelte-collapsible'
+  import { CollapsibleCard } from 'svelte-collapsible'
+  import { dialogs } from 'svelte-dialogs'
   import { environment } from '$lib/env/env'
+  import AddLeagueDialog from '../components/AddLeagueDialog.svelte'
 
   type Match = {
     time: string
@@ -14,6 +16,8 @@
   let matches: Match[] = []
   let brasileiraoMatches: Match[] = []
   let date = new Date().toISOString().split('T')[0]
+  let addLeagueOpened = true
+  let leagues = [{ name: 'liga 1' }, { name: 'liga 2' }]
 
   const handleChangeDate = ({ target }) => {
     date = target.value
@@ -55,6 +59,14 @@
     }) as Match[]
   }
 
+  const handleAddLeagueClick = () => {
+    dialogs.modal(AddLeagueDialog, { leagues })
+    // dialogs
+    //   .prompt([{ name: 'aa', label: 'Liga', type: 'select' }], null)
+    //   .then((a) => console.log(a))
+  }
+  const handleAddLeagueSubmit = () => {}
+
   onMount(() => {
     updateMatches()
   })
@@ -66,52 +78,55 @@
       <p />
       <div class="row">
         <input type="date" value={date} on:change={handleChangeDate} />
-        <input class="button-primary" type="submit" value="Pesquisar" />
+        <input class="button" type="submit" value="Pesquisar" />
       </div>
-      <Accordion>
-        <AccordionItem>
-          <div slot="header" class="row">
-            <div class="one column">
-              <svg
-                style="tran"
-                width="20"
-                height="20"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                ><path d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-            <div class="eleven columns">
-              <h3>Brasileirão</h3>
-            </div>
+      <CollapsibleCard>
+        <div slot="header" class="header row">
+          <div class="one column">
+            <svg
+              style="tran"
+              width="20"
+              height="20"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              ><path d="M9 5l7 7-7 7" />
+            </svg>
           </div>
-          <div slot="body">
-            <table>
-              <thead>
+          <div class="eleven columns">
+            <h3>Brasileirão</h3>
+          </div>
+        </div>
+        <div slot="body">
+          <table>
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Casa</th>
+                <th>Fora</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each brasileiraoMatches as match}
                 <tr>
-                  <th>Horário</th>
-                  <th>Casa</th>
-                  <th>Fora</th>
+                  <td>{match.time}</td>
+                  <td>{match.homeTeam}</td>
+                  <td>{match.awayTeam}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {#each brasileiraoMatches as match}
-                  <tr>
-                    <td>{match.time}</td>
-                    <td>{match.homeTeam}</td>
-                    <td>{match.awayTeam}</td>
-                  </tr>
-                {/each}
-                <tr />
-              </tbody>
-            </table>
-          </div>
-        </AccordionItem>
-      </Accordion>
+              {/each}
+              <tr />
+            </tbody>
+          </table>
+        </div>
+      </CollapsibleCard>
+    </div>
+    {addLeagueOpened}
+    <div class="container add-league">
+      <p />
+      <button class="button-primary" on:click={handleAddLeagueClick}>Adicionar liga</button>
     </div>
   </body>
 </template>

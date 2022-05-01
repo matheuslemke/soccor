@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { CollapsibleCard } from 'svelte-collapsible'
-  import { dialogs } from 'svelte-dialogs'
+  import { dialogs, type PromptOptions } from 'svelte-dialogs'
   import { environment } from '$lib/env/env'
   import AddLeagueDialog from '../components/AddLeagueDialog.svelte'
 
@@ -16,8 +16,7 @@
   let matches: Match[] = []
   let brasileiraoMatches: Match[] = []
   let date = new Date().toISOString().split('T')[0]
-  let addLeagueOpened = true
-  let leagues = [{ name: 'liga 1' }, { name: 'liga 2' }]
+  let selectedLeague
 
   const handleChangeDate = ({ target }) => {
     date = target.value
@@ -60,10 +59,18 @@
   }
 
   const handleAddLeagueClick = () => {
-    dialogs.modal(AddLeagueDialog, { leagues })
-    // dialogs
-    //   .prompt([{ name: 'aa', label: 'Liga', type: 'select' }], null)
-    //   .then((a) => console.log(a))
+    const promptOptions: PromptOptions = {
+      onHide: function (): void {},
+      onHidden: function (): void {},
+      onShow: function (): void {},
+      onShown: function (): void {},
+      resetButton: false,
+      cancelButtonText: 'Cancelar',
+      cancelButtonClass: 'button',
+      submitButtonText: 'Adicionar',
+      submitButtonClass: 'button-primary'
+    }
+    dialogs.prompt(AddLeagueDialog, promptOptions).then((evt) => console.log(evt))
   }
   const handleAddLeagueSubmit = () => {}
 
@@ -123,7 +130,6 @@
         </div>
       </CollapsibleCard>
     </div>
-    {addLeagueOpened}
     <div class="container add-league">
       <p />
       <button class="button-primary" on:click={handleAddLeagueClick}>Adicionar liga</button>

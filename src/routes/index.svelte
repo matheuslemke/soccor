@@ -70,7 +70,12 @@
       submitButtonText: 'Adicionar',
       submitButtonClass: 'button-primary'
     }
-    dialogs.prompt(AddLeagueDialog, promptOptions).then((evt) => console.log(evt))
+    dialogs
+      .prompt({ component: AddLeagueDialog, props: { value: null } }, promptOptions)
+      .then((value) => {
+        selectedLeague = value
+        console.log(`add league ${value}`)
+      })
   }
   const handleAddLeagueSubmit = () => {}
 

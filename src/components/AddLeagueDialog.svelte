@@ -3,7 +3,7 @@
   import { countries, leagues } from '../constants/constants'
 
   let selectedCountryCode = null
-  export let selectedLeague = null
+  export let value: number
 </script>
 
 <DialogContent>
@@ -19,16 +19,14 @@
     </div>
 
     <div class="row">
-      <select disabled={!selectedCountryCode} bind:value={selectedLeague}>
+      <select disabled={!selectedCountryCode} bind:value>
         <option selected disabled value={null}>Selecione a liga</option>
         {#each leagues as league}
           {#if selectedCountryCode && league.countryCode === selectedCountryCode}
-            <option value={league.name}>{league.name}</option>
+            <option value={league.id}>{league.name}</option>
           {/if}
         {/each}
       </select>
-
-      <input type="text">
     </div>
   </svelte:fragment>
 </DialogContent>

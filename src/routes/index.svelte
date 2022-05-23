@@ -3,6 +3,7 @@
   import { CollapsibleCard } from 'svelte-collapsible'
   import { dialogs, type PromptOptions } from 'svelte-dialogs'
   import { environment } from '$lib/env/env'
+  import { supabase } from '$lib/supabaseClient'
   import AddLeagueDialog from '../components/AddLeagueDialog.svelte'
 
   type Match = {
@@ -17,13 +18,14 @@
   let brasileiraoMatches: Match[] = []
   let date = new Date().toISOString().split('T')[0]
   let selectedLeague
+  let leagues = []
 
   const handleChangeDate = ({ target }) => {
     date = target.value
   }
 
   const updateMatches = async () => {
-    const url = `https://v3.football.api-sports.io/fixtures?date=${date}`
+    const url = `${environment.apiUrl}/fixtures?date=${date}`
     const headers = { 'x-apisports-key': `${environment.apiToken}` }
 
     const response = await fetch(url, { headers })
@@ -79,19 +81,86 @@
   }
   const handleAddLeagueSubmit = () => {}
 
+  const fetchLeagues = async () => {
+    try {
+      let fetchedLeagues = await supabase
+        .from('saved_league')
+        .select('id, external_id, name, country_code')
+
+      if (fetchedLeagues) {
+        const { error, status, data } = fetchedLeagues
+        if (error || status === 406) {
+          throw error
+        }
+
+        if (data) {
+          leagues = data
+        }
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
   onMount(() => {
-    updateMatches()
+    // fetchMatches()
+    // updateMatches()
   })
 </script>
 
 <template>
   <body>
-    <div class="container">
+    <div use:fetchLeagues class="container">
       <p />
       <div class="row">
         <input type="date" value={date} on:change={handleChangeDate} />
         <input class="button" type="submit" value="Pesquisar" />
       </div>
+      {#each leagues as league}
+        <CollapsibleCard>
+          <div slot="header" class="header row">
+            <div class="one column">
+              <svg
+                style="tran"
+                width="20"
+                height="20"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                ><path d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+            <div class="eleven columns">
+              <h3>{league.name}</h3>
+            </div>
+          </div>
+          <div slot="body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Horário</th>
+                  <th>Casa</th>
+                  <th>Fora</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each brasileiraoMatches as match}
+                  <tr>
+                    <td>{match.time}</td>
+                    <td>{match.homeTeam}</td>
+                    <td>{match.awayTeam}</td>
+                  </tr>
+                {/each}
+                <tr />
+              </tbody>
+            </table>
+          </div>
+        </CollapsibleCard>
+      {/each}
+
       <CollapsibleCard>
         <div slot="header" class="header row">
           <div class="one column">

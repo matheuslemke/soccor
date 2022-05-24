@@ -1,8 +1,8 @@
 <script lang="ts">
   import { CollapsibleCard } from 'svelte-collapsible'
   import { dialogs, type PromptOptions } from 'svelte-dialogs'
-  import { environment } from '$lib/env/env'
   import { supabase } from '$lib/supabaseClient'
+  import { fetchFixtures } from '$lib/soccerApiClient'
   import AddLeagueDialog from '../components/AddLeagueDialog.svelte'
 
   type Match = {
@@ -21,11 +21,8 @@
     date = target.value
   }
 
-  const fetchFixtures = async () => {
-    const url = `${environment.apiUrl}/fixtures?date=${date}`
-    const headers = { 'x-apisports-key': `${environment.apiToken}` }
-
-    const response = await fetch(url, { headers })
+  const fillFixtures = async () => {
+    const response = await fetchFixtures(date)
 
     if (response.ok) {
       const responseBody = await response.json()
@@ -81,7 +78,11 @@
   }
   const handleAddLeagueSubmit = () => {}
 
-  const fetchLeagues = async () => {
+  const fetchLeagues = (node: any) => {
+    fetchLeaguesDb()
+  }
+
+  const fetchLeaguesDb = async () => {
     try {
       let fetchedLeagues = await supabase
         .from('saved_league')
@@ -95,7 +96,7 @@
 
         if (data) {
           leagues = data
-          fetchFixtures()
+          fillFixtures()
         }
       }
     } catch (error) {
@@ -110,7 +111,7 @@
       <p />
       <div class="row">
         <input type="date" value={date} on:change={handleChangeDate} />
-        <input class="button" type="submit" value="Pesquisar" on:click={fetchFixtures} />
+        <input class="button" type="submit" value="Pesquisar" on:click={fillFixtures} />
       </div>
       {#each leagues as league}
         <CollapsibleCard>

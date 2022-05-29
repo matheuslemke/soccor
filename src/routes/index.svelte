@@ -1,20 +1,16 @@
 <script lang="ts">
   import { CollapsibleCard } from 'svelte-collapsible'
   import { dialogs, type PromptOptions } from 'svelte-dialogs'
-  import { supabase } from '$lib/supabaseClient'
-  import { fetchFixtures } from '$lib/soccerApiClient'
+  import { supabase } from '$lib/client/supabaseClient'
+  import { fetchFixtures } from '$lib/client/soccerApiClient'
   import AddLeagueDialog from '../components/AddLeagueDialog.svelte'
+  import type { Fixture } from '$lib/types/Fixture'
+  import { FixtureMapper } from '$lib/mapper/FixtureMapper'
+  import { LeagueMapper } from '../lib/mapper/LeagueMapper'
+  import { SvelteToast, toast } from '@zerodevx/svelte-toast'
 
-  type Match = {
-    time: string
-    homeTeam: string
-    awayTeam: string
-    leagueId: number
-  }
-
-  let matches: Match[] = []
+  let fixtures: Fixture[] = []
   let date = new Date().toISOString().split('T')[0]
-  let selectedLeague
   let leagues = []
 
   const handleChangeDate = ({ target }) => {
@@ -22,39 +18,20 @@
   }
 
   const fillFixtures = async () => {
-    const response = await fetchFixtures(date)
+    const response: Response = await fetchFixtures(date)
 
     if (response.ok) {
       const responseBody = await response.json()
-      await mapToMatches(responseBody.response)
-      await fillMatches()
-      return
-    }
-
-    return {
-      status: response.status,
-      props: {
-        article: response.ok && (await response.json())
-      }
+      fixtures = FixtureMapper.fromApi(responseBody.response)
+      await fillLeagueMatches()
     }
   }
 
-  const fillMatches = async () => {
+  const fillLeagueMatches = async () => {
     leagues.forEach((league) => {
-      league.matches = matches.filter((match) => match.leagueId === league.external_id)
+      league.matches = fixtures.filter((match) => match.leagueId === league.external_id)
     })
     leagues = leagues // force compiler that object has changed
-  }
-
-  const mapToMatches = async (responseMatches: any[]) => {
-    matches = responseMatches.map((m) => {
-      return {
-        time: new Date(m.fixture.date).toString().slice(16, 21),
-        homeTeam: m.teams.home.name,
-        awayTeam: m.teams.away.name,
-        leagueId: m.league.id
-      }
-    }) as Match[]
   }
 
   const handleAddLeagueClick = () => {
@@ -71,12 +48,22 @@
     }
     dialogs
       .prompt({ component: AddLeagueDialog, props: { value: null } }, promptOptions)
-      .then((value) => {
-        selectedLeague = value
-        console.log(`add league ${value}`)
+      .then(async (value) => {
+        if (value) {
+          const league = LeagueMapper.toDb(value[0])
+          await supabase
+            .from('saved_league')
+            .upsert(league, { returning: 'minimal' })
+            .throwOnError(true)
+          fetchLeaguesDb()
+        }
+      })
+      .catch((e) => {
+        if (e.code && e.code === '23505') {
+          toast.push('Liga já cadastrada!')
+        }
       })
   }
-  const handleAddLeagueSubmit = () => {}
 
   const fetchLeagues = (node: any) => {
     fetchLeaguesDb()
@@ -105,6 +92,7 @@
   }
 </script>
 
+<SvelteToast />
 <template>
   <body>
     <div use:fetchLeagues class="container">

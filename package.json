@@ -33,6 +33,7 @@
   "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^1.35.3",
+    "@zerodevx/svelte-toast": "^0.7.2",
     "svelte-collapsible": "^0.2.1",
     "svelte-dialogs": "^1.1.0"
   }

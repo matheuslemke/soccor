@@ -1,22 +1,8 @@
-![Vercel](https://vercelbadge.vercel.app/api/matheuslemke/soccor)
+![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=soccor)
 
-# create-svelte
+# Soccor
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm init svelte@next
-
-# create a new project in my-app
-npm init svelte@next my-app
-```
-
-> Note: the `@next` is temporary
+Website for the main soccer competitions.
 
 ## Developing
 
@@ -42,4 +28,5 @@ You can preview the production build with `npm run preview`.
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
 ## Icons
+
 http://svgicons.sparkk.fr/

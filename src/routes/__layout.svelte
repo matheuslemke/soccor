@@ -1,8 +1,4 @@
 <template>
-  <head>
-    <link rel="stylesheet" href="/src/styles/normalize.css" />
-    <link rel="stylesheet" href="/src/styles/skeleton.css" />
-  </head>
   <nav class="navbar">
     <div class="container">
       <ul class="navbar-list">

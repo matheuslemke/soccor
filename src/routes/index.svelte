@@ -8,6 +8,7 @@
   import { FixtureMapper } from '$lib/mapper/FixtureMapper'
   import { LeagueMapper } from '../lib/mapper/LeagueMapper'
   import { SvelteToast, toast } from '@zerodevx/svelte-toast'
+  import { FaRegTrashAlt, FaAngleRight } from 'svelte-icons/fa'
 
   let fixtures: Fixture[] = []
   let date = new Date().toISOString().split('T')[0]
@@ -92,34 +93,32 @@
   }
 </script>
 
-<SvelteToast />
 <template>
+  <SvelteToast />
   <body>
     <div use:fetchLeagues class="container">
       <p />
-      <div class="row">
+      <div class="row date-search">
         <input type="date" value={date} on:change={handleChangeDate} />
-        <input class="button" type="submit" value="Pesquisar" on:click={fillFixtures} />
+        <button type="submit" on:click={fillFixtures}>Pesquisar</button>
       </div>
       {#each leagues as league}
         <CollapsibleCard>
           <div slot="header" class="header row">
             <div class="one column">
-              <svg
-                style="tran"
-                width="20"
-                height="20"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                ><path d="M9 5l7 7-7 7" />
-              </svg>
+              <div class="fan-right-icon">
+                <FaAngleRight />
+              </div>
             </div>
-            <div class="eleven columns">
+            <div class="ten columns">
               <h3>{league.name}</h3>
+            </div>
+            <div class="one column">
+              <button class="trash-icon">
+                <div>
+                  <FaRegTrashAlt />
+                </div>
+              </button>
             </div>
           </div>
           <div slot="body">
@@ -157,3 +156,35 @@
     </div>
   </body>
 </template>
+
+<style lang="scss">
+  div.date-search {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    input[type='date'] {
+      margin: 0;
+    }
+
+    input[type='submit'] {
+      margin: 0;
+      margin-left: 15px;
+    }
+  }
+
+  .fan-right-icon {
+    height: 36px;
+    width: auto;
+  }
+
+  button.trash-icon {
+    padding: 1px 6px;
+    > div {
+      display: flex;
+      align-items: center;
+      height: 18px;
+      width: 18px;
+    }
+  }
+</style>
